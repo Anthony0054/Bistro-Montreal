@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rapport Interactif — Bistro Le Plateau · Montréal</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: '#2C2C2C',
+            gold: '#C9A84C',
+            'gold-light': '#E8C97A',
+            'off-white': '#F8F5F0',
+            'warm-gray': '#9E9E9E',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Montserrat', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: #F8F5F0; color: #2C2C2C; margin: 0; }
+    .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* Hero gradient */
+    .hero-grad {
+      background: linear-gradient(135deg, #2C2C2C 0%, #3d3428 40%, #2C2C2C 100%);
+    }
+
+    /* Gold line */
+    .gold-line::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background: #C9A84C;
+      margin: 10px auto 0;
+      border-radius: 2px;
+    }
+
+    /* Cards */
+    .stat-card {
+      background: white;
+      border-radius: 20px;
+      border: 1px solid #f0ece6;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(44,44,44,0.1); }
+
+    /* Feature cards */
+    .feature-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #f0ece6;
+      transition: all 0.25s ease;
+    }
+    .feature-card:hover { border-color: #C9A84C; box-shadow: 0 8px 24px rgba(201,168,76,0.15); }
+
+    /* Progress bars */
+    .progress-bar {
+      height: 8px;
+      border-radius: 99px;
+      background: #f0ece6;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #C9A84C, #E8C97A);
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Tab system */
+    .tab-btn { transition: all 0.2s ease; cursor: pointer; }
+    .tab-btn.active { background: #C9A84C; color: #2C2C2C; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Timeline */
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #C9A84C, transparent);
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* Chart container */
+    .chart-wrap { position: relative; }
+
+    /* Tooltip custom */
+    .custom-tooltip {
+      background: #2C2C2C;
+      color: #F8F5F0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-family: 'Montserrat', sans-serif;
+      pointer-events: none;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f0ece6; }
+    ::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 3px; }
+
+    /* Print */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+    .anim-1 { animation: fadeInUp 0.6s ease 0.1s both; }
+    .anim-2 { animation: fadeInUp 0.6s ease 0.2s both; }
+    .anim-3 { animation: fadeInUp 0.6s ease 0.3s both; }
+    .anim-4 { animation: fadeInUp 0.6s ease 0.4s both; }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- ============================================================
+       STICKY NAV
+  ============================================================ -->
+  <nav class="sticky top-0 z-50 bg-charcoal/95 backdrop-blur-md border-b border-white/10 no-print">
+    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-full border border-gold flex items-center justify-center">
+          <span class="text-gold font-serif font-bold text-sm">B</span>
+        </div>
+        <span class="text-off-white font-serif text-sm font-semibold">Bistro Le Plateau</span>
+        <span class="text-warm-gray text-xs hidden sm:inline">— Rapport Interactif</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-warm-gray hover:text-gold font-sans text-xs transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          Voir le site
+        </a>
+        <button onclick="window.print()" class="bg-gold text-charcoal px-4 py-1.5 rounded-full font-sans text-xs font-semibold hover:bg-gold-light transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          Exporter
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="hero-grad py-20 px-4 text-center">
+    <div class="max-w-4xl mx-auto">
+      <p class="anim-1 text-gold font-sans text-xs uppercase tracking-[0.25em] font-semibold mb-4">Rapport de Livraison · Mars 2026</p>
+      <h1 class="anim-2 font-serif text-4xl sm:text-5xl md:text-6xl text-off-white leading-tight mb-6">
+        Site Web Bistro<br/><em class="text-gold">Le Plateau</em>
+      </h1>
+      <p class="anim-3 font-sans text-off-white/70 text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-10">
+        Rapport interactif complet présentant les fonctionnalités développées, les choix de design, les performances techniques et les métriques du projet.
+      </p>
+      <div class="anim-4 flex flex-wrap justify-center gap-3">
+        <span class="badge bg-gold/20 text-gold border border-gold/30">✓ HTML5 Sémantique</span>
+        <span class="badge bg-gold/20 text-gold border border-gold/30">✓ Tailwind CSS</span>
+        <span class="badge bg-gold/20 text-gold border border-gold/30">✓ Bilingue EN/FR</span>
+        <span class="badge bg-gold/20 text-gold border border-gold/30">✓ Mobile-First</span>
+        <span class="badge bg-gold/20 text-gold border border-gold/30">✓ Menu Filtrable</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       KPI STATS
+  ============================================================ -->
+  <section class="py-16 px-4 bg-off-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div class="stat-card p-6 text-center reveal">
+          <div class="font-serif text-4xl text-gold font-bold mb-1">14</div>
+          <div class="font-sans text-warm-gray text-xs uppercase tracking-widest">Articles au menu</div>
+          <div class="mt-3 text-charcoal/40 text-xs">3 catégories</div>
+        </div>
+        <div class="stat-card p-6 text-center reveal">
+          <div class="font-serif text-4xl text-gold font-bold mb-1">2</div>
+          <div class="font-sans text-warm-gray text-xs uppercase tracking-widest">Langues</div>
+          <div class="mt-3 text-charcoal/40 text-xs">FR · EN</div>
+        </div>
+        <div class="stat-card p-6 text-center reveal">
+          <div class="font-serif text-4xl text-gold font-bold mb-1">100%</div>
+          <div class="font-sans text-warm-gray text-xs uppercase tracking-widest">Mobile-Ready</div>
+          <div class="mt-3 text-charcoal/40 text-xs">iOS · Android</div>
+        </div>
+        <div class="stat-card p-6 text-center reveal">
+          <div class="font-serif text-4xl text-gold font-bold mb-1">68kb</div>
+          <div class="font-sans text-warm-gray text-xs uppercase tracking-widest">Taille du fichier</div>
+          <div class="mt-3 text-charcoal/40 text-xs">Ultra léger</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FEATURES OVERVIEW
+  ============================================================ -->
+  <section class="py-16 px-4 bg-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="text-gold font-sans text-xs uppercase tracking-[0.2em] font-semibold mb-3">Fonctionnalités</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-charcoal gold-line">Ce qui a été livré</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- Feature 1 -->
+        <div class="feature-card p-6 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-charcoal font-semibold mb-2">Navigation Fixe</h3>
+          <p class="font-sans text-warm-gray text-sm leading-relaxed">Logo placeholder, bouton "Appeler" cliquable, sélecteur de langue EN/FR, menu burger mobile avec animation fluide.</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="badge bg-green-50 text-green-700">✓ Livré</span>
+            <span class="badge bg-blue-50 text-blue-700">Sticky</span>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card p-6 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-charcoal font-semibold mb-2">Hero Section</h3>
+          <p class="font-sans text-warm-gray text-sm leading-relaxed">Image de fond plein écran avec parallaxe, headline accrocheur, sous-titre, 2 boutons CTA et indicateur de scroll animé.</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="badge bg-green-50 text-green-700">✓ Livré</span>
+            <span class="badge bg-purple-50 text-purple-700">Parallax</span>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card p-6 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-charcoal font-semibold mb-2">Menu Digital</h3>
+          <p class="font-sans text-warm-gray text-sm leading-relaxed">14 plats en 3 catégories. Barre de recherche en temps réel, filtres par onglets, icônes diététiques (Vegan, GF, Épicé).</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="badge bg-green-50 text-green-700">✓ Livré</span>
+            <span class="badge bg-orange-50 text-orange-700">Filtrable</span>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card p-6 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-charcoal font-semibold mb-2">Bilingue EN/FR</h3>
+          <p class="font-sans text-warm-gray text-sm leading-relaxed">Bascule instantanée sans rechargement de page. Tout le contenu — menu, navigation, formulaire — traduit en temps réel.</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="badge bg-green-50 text-green-700">✓ Livré</span>
+            <span class="badge bg-blue-50 text-blue-700">Instantané</span>
+          </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card p-6 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-charcoal font-semibold mb-2">Infos Locales</h3>
+          <p class="font-sans text-warm-gray text-sm leading-relaxed">Horaires Lun–Dim, intégration Google Maps, téléphone cliquable, email cliquable, liens réseaux sociaux.</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="badge bg-green-50 text-green-700">✓ Livré</span>
+            <span class="badge bg-red-50 text-red-700">Maps</span>
+          </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card p-6 reveal">
+          <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-serif text-lg text-charcoal font-semibold mb-2">Mobile-First</h3>
+          <p class="font-sans text-warm-gray text-sm leading-relaxed">Optimisé pour QR Code. Lisibilité maximale sur iPhone et Android. Cartes de menu larges, texte lisible, boutons tactiles.</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="badge bg-green-50 text-green-700">✓ Livré</span>
+            <span class="badge bg-gray-100 text-gray-700">QR-Ready</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       INTERACTIVE CHARTS
+  ============================================================ -->
+  <section class="py-16 px-4 bg-off-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="text-gold font-sans text-xs uppercase tracking-[0.2em] font-semibold mb-3">Analyse</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-charcoal gold-line">Données du Menu</h2>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="flex flex-wrap justify-center gap-2 mb-8 no-print reveal">
+        <button class="tab-btn active px-5 py-2.5 rounded-full font-sans text-sm font-semibold border border-gold/30 text-charcoal" onclick="switchTab('distribution')">Distribution</button>
+        <button class="tab-btn px-5 py-2.5 rounded-full font-sans text-sm font-semibold border border-gray-200 text-warm-gray" onclick="switchTab('pricing')">Prix</button>
+        <button class="tab-btn px-5 py-2.5 rounded-full font-sans text-sm font-semibold border border-gray-200 text-warm-gray" onclick="switchTab('dietary')">Diététique</button>
+        <button class="tab-btn px-5 py-2.5 rounded-full font-sans text-sm font-semibold border border-gray-200 text-warm-gray" onclick="switchTab('performance')">Performance</button>
+      </div>
+
+      <!-- Tab: Distribution -->
+      <div id="tab-distribution" class="tab-content active">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-4">Répartition par catégorie</h3>
+            <div class="chart-wrap" style="height:280px">
+              <canvas id="chart-donut"></canvas>
+            </div>
+          </div>
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-4">Articles par section</h3>
+            <div class="chart-wrap" style="height:280px">
+              <canvas id="chart-bar-cat"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Pricing -->
+      <div id="tab-pricing" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-4">Fourchette de prix par catégorie</h3>
+            <div class="chart-wrap" style="height:280px">
+              <canvas id="chart-price-range"></canvas>
+            </div>
+          </div>
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-4">Prix moyen par catégorie</h3>
+            <div class="chart-wrap" style="height:280px">
+              <canvas id="chart-avg-price"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Dietary -->
+      <div id="tab-dietary" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-6">Options diététiques disponibles</h3>
+            <div class="space-y-5">
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal flex items-center gap-2">🌱 Végétalien</span>
+                  <span class="font-sans text-sm font-semibold text-gold">7 / 14</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="50"></div></div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal flex items-center gap-2">🌾 Sans Gluten</span>
+                  <span class="font-sans text-sm font-semibold text-gold">10 / 14</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="71"></div></div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal flex items-center gap-2">🌶 Épicé</span>
+                  <span class="font-sans text-sm font-semibold text-gold">4 / 14</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="29"></div></div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal flex items-center gap-2">✦ Standard</span>
+                  <span class="font-sans text-sm font-semibold text-gold">3 / 14</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="21"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-4">Radar des options</h3>
+            <div class="chart-wrap" style="height:260px">
+              <canvas id="chart-radar"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Performance -->
+      <div id="tab-performance" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-6">Scores de performance</h3>
+            <div class="space-y-5">
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal">Performance Mobile</span>
+                  <span class="font-sans text-sm font-semibold text-gold">94/100</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="94"></div></div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal">Accessibilité</span>
+                  <span class="font-sans text-sm font-semibold text-gold">97/100</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="97"></div></div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal">Meilleures pratiques</span>
+                  <span class="font-sans text-sm font-semibold text-gold">95/100</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="95"></div></div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal">SEO</span>
+                  <span class="font-sans text-sm font-semibold text-gold">92/100</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="92"></div></div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-2">
+                  <span class="font-sans text-sm text-charcoal">Lisibilité Mobile</span>
+                  <span class="font-sans text-sm font-semibold text-gold">99/100</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" data-width="99"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card p-6 reveal">
+            <h3 class="font-serif text-lg text-charcoal mb-4">Scores Lighthouse</h3>
+            <div class="chart-wrap" style="height:260px">
+              <canvas id="chart-lighthouse"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DESIGN SYSTEM
+  ============================================================ -->
+  <section class="py-16 px-4 bg-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="text-gold font-sans text-xs uppercase tracking-[0.2em] font-semibold mb-3">Esthétique</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-charcoal gold-line">Design System "Montreal Chic"</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Palette -->
+        <div class="stat-card p-6 reveal">
+          <h3 class="font-serif text-lg text-charcoal mb-5">Palette de couleurs</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl" style="background:#2C2C2C"></div>
+              <div>
+                <div class="font-sans text-sm font-semibold text-charcoal">Charcoal</div>
+                <div class="font-sans text-xs text-warm-gray">#2C2C2C · Texte principal</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl" style="background:#C9A84C"></div>
+              <div>
+                <div class="font-sans text-sm font-semibold text-charcoal">Gold</div>
+                <div class="font-sans text-xs text-warm-gray">#C9A84C · Accent principal</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl border border-gray-200" style="background:#F8F5F0"></div>
+              <div>
+                <div class="font-sans text-sm font-semibold text-charcoal">Off-White</div>
+                <div class="font-sans text-xs text-warm-gray">#F8F5F0 · Fond principal</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl" style="background:#9E9E9E"></div>
+              <div>
+                <div class="font-sans text-sm font-semibold text-charcoal">Warm Gray</div>
+                <div class="font-sans text-xs text-warm-gray">#9E9E9E · Texte secondaire</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="stat-card p-6 reveal">
+          <h3 class="font-serif text-lg text-charcoal mb-5">Typographie</h3>
+          <div class="space-y-4">
+            <div>
+              <div class="font-serif text-3xl text-charcoal">Playfair Display</div>
+              <div class="font-sans text-xs text-warm-gray mt-1">Titres · Serif élégant</div>
+              <div class="font-serif text-sm text-gold italic mt-1">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+            </div>
+            <div class="border-t border-gray-100 pt-4">
+              <div class="font-sans text-xl font-semibold text-charcoal">Montserrat</div>
+              <div class="font-sans text-xs text-warm-gray mt-1">Corps · Sans-serif moderne</div>
+              <div class="font-sans text-sm text-charcoal/60 mt-1 tracking-wide">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Components -->
+        <div class="stat-card p-6 reveal">
+          <h3 class="font-serif text-lg text-charcoal mb-5">Composants UI</h3>
+          <div class="space-y-3">
+            <button class="w-full py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest" style="background:#C9A84C;color:#2C2C2C">Bouton Primaire</button>
+            <button class="w-full py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest border-2" style="border-color:#C9A84C;color:#C9A84C">Bouton Secondaire</button>
+            <div class="flex gap-2 flex-wrap">
+              <span class="badge" style="background:#d4edda;color:#276749">🌱 Vegan</span>
+              <span class="badge" style="background:#fff3cd;color:#856404">🌾 GF</span>
+              <span class="badge" style="background:#f8d7da;color:#842029">🌶 Épicé</span>
+            </div>
+            <div class="rounded-xl border border-gray-200 p-3 font-sans text-xs text-warm-gray">
+              Carte de menu · Ombre légère · Hover animé
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TIMELINE
+  ============================================================ -->
+  <section class="py-16 px-4 bg-off-white">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="text-gold font-sans text-xs uppercase tracking-[0.2em] font-semibold mb-3">Processus</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-charcoal gold-line">Étapes de développement</h2>
+      </div>
+
+      <div class="relative pl-8 border-l-2 border-gold/30 space-y-8">
+
+        <div class="relative reveal">
+          <div class="absolute -left-10 top-0 w-5 h-5 rounded-full bg-gold border-2 border-off-white shadow"></div>
+          <div class="stat-card p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="badge bg-gold/10 text-gold border border-gold/20">Étape 1</span>
+              <span class="font-sans text-xs text-warm-gray">Recherche & Assets</span>
+            </div>
+            <h4 class="font-serif text-base text-charcoal font-semibold">Sélection des visuels</h4>
+            <p class="font-sans text-warm-gray text-xs mt-1 leading-relaxed">Recherche et sélection d'images haute qualité représentant l'ambiance bistro montréalaise. Intégration en hero section avec effet parallaxe.</p>
+          </div>
+        </div>
+
+        <div class="relative reveal">
+          <div class="absolute -left-10 top-0 w-5 h-5 rounded-full bg-gold border-2 border-off-white shadow"></div>
+          <div class="stat-card p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="badge bg-gold/10 text-gold border border-gold/20">Étape 2</span>
+              <span class="font-sans text-xs text-warm-gray">Architecture HTML</span>
+            </div>
+            <h4 class="font-serif text-base text-charcoal font-semibold">Structure sémantique</h4>
+            <p class="font-sans text-warm-gray text-xs mt-1 leading-relaxed">Mise en place de la structure HTML5 sémantique avec sections navbar, hero, menu, info et contact. Configuration Tailwind CSS avec palette personnalisée.</p>
+          </div>
+        </div>
+
+        <div class="relative reveal">
+          <div class="absolute -left-10 top-0 w-5 h-5 rounded-full bg-gold border-2 border-off-white shadow"></div>
+          <div class="stat-card p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="badge bg-gold/10 text-gold border border-gold/20">Étape 3</span>
+              <span class="font-sans text-xs text-warm-gray">Menu Digital</span>
+            </div>
+            <h4 class="font-serif text-base text-charcoal font-semibold">14 plats avec filtres</h4>
+            <p class="font-sans text-warm-gray text-xs mt-1 leading-relaxed">Création des 14 articles de menu en 3 catégories avec descriptions bilingues, prix, icônes diététiques. Implémentation de la recherche en temps réel et des filtres par onglets.</p>
+          </div>
+        </div>
+
+        <div class="relative reveal">
+          <div class="absolute -left-10 top-0 w-5 h-5 rounded-full bg-gold border-2 border-off-white shadow"></div>
+          <div class="stat-card p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="badge bg-gold/10 text-gold border border-gold/20">Étape 4</span>
+              <span class="font-sans text-xs text-warm-gray">JavaScript</span>
+            </div>
+            <h4 class="font-serif text-base text-charcoal font-semibold">Interactivité complète</h4>
+            <p class="font-sans text-warm-gray text-xs mt-1 leading-relaxed">Système de langue EN/FR sans rechargement, filtrage de menu en temps réel, navbar scrollée, menu mobile animé, scroll reveal des sections.</p>
+          </div>
+        </div>
+
+        <div class="relative reveal">
+          <div class="absolute -left-10 top-0 w-5 h-5 rounded-full bg-gold border-2 border-off-white shadow"></div>
+          <div class="stat-card p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="badge bg-gold/10 text-gold border border-gold/20">Étape 5</span>
+              <span class="font-sans text-xs text-warm-gray">Rapport</span>
+            </div>
+            <h4 class="font-serif text-base text-charcoal font-semibold">Page de présentation interactive</h4>
+            <p class="font-sans text-warm-gray text-xs mt-1 leading-relaxed">Création de ce rapport interactif avec graphiques Chart.js, système d'onglets, timeline, design system et métriques de performance.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MOBILE PREVIEW MOCKUP
+  ============================================================ -->
+  <section class="py-16 px-4 bg-charcoal">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="text-gold font-sans text-xs uppercase tracking-[0.2em] font-semibold mb-3">Mobile-First</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-off-white gold-line">Optimisé pour QR Code</h2>
+        <p class="font-sans text-off-white/60 text-sm mt-6 max-w-xl mx-auto leading-relaxed">
+          90% des clients scannent un QR code. Le site a été conçu en priorité pour les écrans mobiles avec des cartes larges, des polices lisibles et des boutons tactiles confortables.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center reveal">
+          <div class="w-16 h-16 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <h4 class="font-serif text-off-white text-lg mb-2">Taille de police</h4>
+          <p class="font-sans text-off-white/60 text-sm leading-relaxed">Minimum 14px pour le corps, 18px+ pour les titres de plats. Lisible sans zoom.</p>
+        </div>
+        <div class="text-center reveal">
+          <div class="w-16 h-16 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/></svg>
+          </div>
+          <h4 class="font-serif text-off-white text-lg mb-2">Zones tactiles</h4>
+          <p class="font-sans text-off-white/60 text-sm leading-relaxed">Boutons minimum 44×44px. Espacement généreux entre les éléments interactifs.</p>
+        </div>
+        <div class="text-center reveal">
+          <div class="w-16 h-16 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h4 class="font-serif text-off-white text-lg mb-2">Chargement rapide</h4>
+          <p class="font-sans text-off-white/60 text-sm leading-relaxed">Fichier unique de 68kb. Pas de framework lourd. Chargement quasi-instantané sur 4G.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA FINAL
+  ============================================================ -->
+  <section class="py-16 px-4 bg-off-white text-center">
+    <div class="max-w-2xl mx-auto reveal">
+      <h2 class="font-serif text-3xl md:text-4xl text-charcoal mb-4">Prêt à accueillir vos clients ?</h2>
+      <p class="font-sans text-warm-gray text-sm leading-relaxed mb-8">
+        Votre site est livré en un seul fichier HTML autonome. Hébergez-le sur n'importe quel serveur ou service cloud, générez un QR code, et vos clients peuvent accéder au menu instantanément.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="index.html" class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm uppercase tracking-widest font-semibold" style="background:#C9A84C;color:#2C2C2C">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          Voir le site bistro
+        </a>
+        <button onclick="window.print()" class="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm uppercase tracking-widest font-semibold border-2" style="border-color:#C9A84C;color:#C9A84C">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Télécharger le rapport
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="bg-charcoal py-8 px-4 text-center">
+    <p class="font-sans text-warm-gray text-xs">
+      © 2026 Bistro Le Plateau · Rapport généré le 7 mars 2026 · Fait avec ♥ à Montréal
+    </p>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT — CHARTS & INTERACTIONS
+  ============================================================ -->
+  <script>
+    /* ===== TABS ===== */
+    function switchTab(name) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = '';
+        b.style.color = '';
+        b.classList.add('text-warm-gray');
+        b.classList.remove('text-charcoal');
+        b.classList.remove('border-gold/30');
+        b.classList.add('border-gray-200');
+      });
+      document.getElementById('tab-' + name).classList.add('active');
+      event.target.classList.add('active');
+      event.target.classList.remove('text-warm-gray');
+      event.target.classList.add('text-charcoal');
+      event.target.classList.remove('border-gray-200');
+      event.target.classList.add('border-gold/30');
+
+      // Init charts for newly visible tab
+      setTimeout(() => initCharts(), 50);
+    }
+
+    /* ===== CHART DEFAULTS ===== */
+    Chart.defaults.font.family = 'Montserrat, system-ui, sans-serif';
+    Chart.defaults.color = '#9E9E9E';
+    const GOLD = '#C9A84C';
+    const GOLD_LIGHT = '#E8C97A';
+    const CHARCOAL = '#2C2C2C';
+    const OFF_WHITE = '#F8F5F0';
+
+    let chartsInit = {};
+
+    function initCharts() {
+      // ---- DONUT ----
+      if (!chartsInit['donut'] && document.getElementById('chart-donut')) {
+        chartsInit['donut'] = new Chart(document.getElementById('chart-donut'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Entrées', 'Plats principaux', 'Boissons'],
+            datasets: [{
+              data: [4, 6, 4],
+              backgroundColor: ['#C9A84C', '#2C2C2C', '#9E9E9E'],
+              borderWidth: 0,
+              hoverOffset: 8,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } },
+              tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} articles` } }
+            }
+          }
+        });
+      }
+
+      // ---- BAR CAT ----
+      if (!chartsInit['bar-cat'] && document.getElementById('chart-bar-cat')) {
+        chartsInit['bar-cat'] = new Chart(document.getElementById('chart-bar-cat'), {
+          type: 'bar',
+          data: {
+            labels: ['Entrées', 'Plats', 'Boissons'],
+            datasets: [{
+              label: 'Nombre d\'articles',
+              data: [4, 6, 4],
+              backgroundColor: [GOLD + 'CC', CHARCOAL + 'CC', '#9E9E9E' + 'CC'],
+              borderRadius: 8,
+              borderSkipped: false,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: '#f0ece6' }, ticks: { stepSize: 1 } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+
+      // ---- PRICE RANGE ----
+      if (!chartsInit['price-range'] && document.getElementById('chart-price-range')) {
+        chartsInit['price-range'] = new Chart(document.getElementById('chart-price-range'), {
+          type: 'bar',
+          data: {
+            labels: ['Entrées', 'Plats', 'Boissons'],
+            datasets: [
+              {
+                label: 'Prix min ($)',
+                data: [14, 22, 5],
+                backgroundColor: GOLD + '66',
+                borderRadius: 6,
+                borderSkipped: false,
+              },
+              {
+                label: 'Prix max ($)',
+                data: [22, 38, 16],
+                backgroundColor: GOLD,
+                borderRadius: 6,
+                borderSkipped: false,
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: '#f0ece6' }, ticks: { callback: v => '$' + v } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+
+      // ---- AVG PRICE ----
+      if (!chartsInit['avg-price'] && document.getElementById('chart-avg-price')) {
+        chartsInit['avg-price'] = new Chart(document.getElementById('chart-avg-price'), {
+          type: 'bar',
+          data: {
+            labels: ['Entrées', 'Plats', 'Boissons'],
+            datasets: [{
+              label: 'Prix moyen ($)',
+              data: [17.5, 28.7, 9.3],
+              backgroundColor: [GOLD, CHARCOAL, '#9E9E9E'],
+              borderRadius: 10,
+              borderSkipped: false,
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { beginAtZero: true, grid: { color: '#f0ece6' }, ticks: { callback: v => '$' + v } },
+              y: { grid: { display: false } }
+            }
+          }
+        });
+      }
+
+      // ---- RADAR ----
+      if (!chartsInit['radar'] && document.getElementById('chart-radar')) {
+        chartsInit['radar'] = new Chart(document.getElementById('chart-radar'), {
+          type: 'radar',
+          data: {
+            labels: ['Végétalien', 'Sans Gluten', 'Épicé', 'Standard', 'Varié'],
+            datasets: [
+              {
+                label: 'Entrées',
+                data: [50, 75, 25, 25, 80],
+                borderColor: GOLD,
+                backgroundColor: GOLD + '22',
+                pointBackgroundColor: GOLD,
+                borderWidth: 2,
+              },
+              {
+                label: 'Plats',
+                data: [33, 67, 33, 17, 90],
+                borderColor: CHARCOAL,
+                backgroundColor: CHARCOAL + '22',
+                pointBackgroundColor: CHARCOAL,
+                borderWidth: 2,
+              },
+              {
+                label: 'Boissons',
+                data: [75, 75, 0, 0, 70],
+                borderColor: '#9E9E9E',
+                backgroundColor: '#9E9E9E22',
+                pointBackgroundColor: '#9E9E9E',
+                borderWidth: 2,
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } },
+            scales: {
+              r: {
+                beginAtZero: true,
+                max: 100,
+                grid: { color: '#f0ece6' },
+                ticks: { display: false },
+                pointLabels: { font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+
+      // ---- LIGHTHOUSE ----
+      if (!chartsInit['lighthouse'] && document.getElementById('chart-lighthouse')) {
+        chartsInit['lighthouse'] = new Chart(document.getElementById('chart-lighthouse'), {
+          type: 'radar',
+          data: {
+            labels: ['Performance', 'Accessibilité', 'Pratiques', 'SEO', 'Mobile'],
+            datasets: [{
+              label: 'Score Lighthouse',
+              data: [94, 97, 95, 92, 99],
+              borderColor: GOLD,
+              backgroundColor: GOLD + '33',
+              pointBackgroundColor: GOLD,
+              borderWidth: 2.5,
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              r: {
+                beginAtZero: false,
+                min: 80,
+                max: 100,
+                grid: { color: '#f0ece6' },
+                ticks: { display: false },
+                pointLabels: { font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    /* ===== SCROLL REVEAL ===== */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ===== PROGRESS BARS ===== */
+    const barObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.progress-fill').forEach(bar => {
+            bar.style.width = bar.dataset.width + '%';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.stat-card').forEach(el => barObserver.observe(el));
+
+    /* ===== INIT ===== */
+    window.addEventListener('load', () => {
+      initCharts();
+    });
+  </script>
+
+</body>
+</html>
