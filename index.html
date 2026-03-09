@@ -22,15 +22,21 @@
     .page-section { display: none; min-height: 80vh; }
     .page-section.active { display: block; animation: fadeIn 0.6s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .hero-video-bg { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('hero-bg.jpg'); background-size: cover; background-position: center; }
+    .hero-video-bg { 
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('hero-bg.jpg'); 
+        background-size: cover; background-position: center; 
+    }
     .nav-link.active { color: #B8964B; border-bottom: 2px solid #B8964B; }
+    .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: #B8964B; animation: dot-flashing 1s infinite linear alternate; animation-delay: .5s; }
+    @keyframes dot-flashing { 0% { opacity: 1; } 50%, 100% { opacity: .2; } }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
   </style>
 </head>
 
 <body class="bg-stone font-sans text-charcoal antialiased">
 
   <nav class="fixed top-0 w-full z-50 bg-charcoal/95 backdrop-blur-xl border-b border-white/5 px-8 h-24 flex items-center justify-between">
-    <div class="flex flex-col">
+    <div class="flex flex-col cursor-pointer" onclick="showPage('home')">
       <span class="font-serif text-2xl text-white tracking-tighter leading-none">Bistro Le Plateau</span>
       <span class="text-[9px] text-gold uppercase tracking-[0.4em] mt-1">Montréal • Est. 2026</span>
     </div>
@@ -45,71 +51,78 @@
     <button onclick="showPage('reserve')" class="bg-gold text-white px-8 py-3 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-charcoal transition-all">Réserver</button>
   </nav>
 
-  <main id="home" class="page-section active pt-24">
-    <section class="h-[85vh] flex items-center justify-center hero-video-bg relative overflow-hidden">
-      <div class="text-center z-10 px-6">
-        <h2 class="font-serif italic text-white text-3xl md:text-4xl mb-4 font-light">L'art de recevoir</h2>
-        <h1 class="font-serif text-6xl md:text-9xl text-white mb-12 tracking-tight">Expérience <br><span class="text-gold">Culinaire</span></h1>
-        <button onclick="showPage('menu')" class="border border-white/30 text-white px-12 py-5 text-[11px] uppercase tracking-[0.4em] hover:bg-white hover:text-charcoal transition-all">Découvrir la carte</button>
+  <div id="content-area">
+    
+    <main id="home" class="page-section active pt-24">
+      <section class="h-[85vh] flex items-center justify-center hero-video-bg relative overflow-hidden">
+        <div class="text-center z-10 px-6">
+          <h2 class="font-serif italic text-white text-3xl md:text-4xl mb-4 font-light animate-pulse">L'art de recevoir</h2>
+          <h1 class="font-serif text-6xl md:text-9xl text-white mb-12 tracking-tight">Expérience <br><span class="text-gold">Culinaire</span></h1>
+          <button onclick="showPage('menu')" class="border border-white/30 text-white px-12 py-5 text-[11px] uppercase tracking-[0.4em] hover:bg-white hover:text-charcoal transition-all">Découvrir la carte</button>
+        </div>
+      </section>
+    </main>
+
+    <main id="menu" class="page-section pt-40 px-6 max-w-7xl mx-auto pb-32">
+      <div class="text-center mb-24">
+        <h2 class="font-serif text-5xl md:text-7xl mb-6">Le Menu du Marché</h2>
+        <p class="text-gold uppercase tracking-[0.5em] text-[11px]">Saison Printemps 2026</p>
       </div>
-    </section>
-  </main>
-
-  <main id="menu" class="page-section pt-40 px-6 max-w-7xl mx-auto pb-32">
-    <div class="text-center mb-24">
-      <h2 class="font-serif text-5xl md:text-7xl mb-6">Le Menu du Marché</h2>
-      <p class="text-gold uppercase tracking-[0.5em] text-[11px]">Saison Printemps 2026</p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-20">
-      <div class="space-y-12">
-        <h3 class="font-serif text-3xl italic border-b border-gold/30 pb-4">Préludes</h3>
-        <div class="group cursor-default">
-          <div class="flex justify-between items-baseline mb-2">
-            <h4 class="font-semibold uppercase text-xs tracking-widest">Huîtres de saison (6)</h4>
-            <span class="text-gold">24</span>
-          </div>
-          <p class="text-[11px] text-charcoal/50 leading-relaxed italic">Mignonette au vinaigre de cidre et aneth fraîche.</p>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-20">
+        <div class="space-y-12">
+            <h3 class="font-serif text-3xl italic border-b border-gold/30 pb-4">Préludes</h3>
+            <div class="flex justify-between items-baseline mb-2"><h4 class="font-semibold uppercase text-xs tracking-widest">Huîtres de saison</h4><span class="text-gold">24</span></div>
+            <div class="flex justify-between items-baseline mb-2"><h4 class="font-semibold uppercase text-xs tracking-widest">Os à Moelle Rôti</h4><span class="text-gold">22</span></div>
         </div>
-        <div class="group">
-          <div class="flex justify-between items-baseline mb-2">
-            <h4 class="font-semibold uppercase text-xs tracking-widest">Os à Moelle Rôti</h4>
-            <span class="text-gold">22</span>
-          </div>
-          <p class="text-[11px] text-charcoal/50 leading-relaxed italic">Sel de mer fumé, persillade et pain de campagne grillé.</p>
+        <div class="space-y-12">
+            <h3 class="font-serif text-3xl italic border-b border-gold/30 pb-4">Signatures</h3>
+            <div class="flex justify-between items-baseline mb-2"><h4 class="font-semibold uppercase text-xs tracking-widest">Ris de Veau</h4><span class="text-gold">42</span></div>
+            <div class="flex justify-between items-baseline mb-2"><h4 class="font-semibold uppercase text-xs tracking-widest">Magret de Canard</h4><span class="text-gold">45</span></div>
         </div>
-      </div>
-
-      <div class="space-y-12">
-        <h3 class="font-serif text-3xl italic border-b border-gold/30 pb-4">Signatures</h3>
-        <div class="group">
-          <div class="flex justify-between items-baseline mb-2">
-            <h4 class="font-semibold uppercase text-xs tracking-widest">Ris de Veau Croustillants</h4>
-            <span class="text-gold">42</span>
-          </div>
-          <p class="text-[11px] text-charcoal/50 leading-relaxed italic">Champignons sauvages, jus corsé à la truffe noire.</p>
-        </div>
-        <div class="group">
-          <div class="flex justify-between items-baseline mb-2">
-            <h4 class="font-semibold uppercase text-xs tracking-widest">Magret de Canard</h4>
-            <span class="text-gold">45</span>
-          </div>
-          <p class="text-[11px] text-charcoal/50 leading-relaxed italic">Laqué au miel de lavande, purée de carottes au gingembre.</p>
+        <div class="space-y-12">
+            <h3 class="font-serif text-3xl italic border-b border-gold/30 pb-4">Finales</h3>
+            <div class="flex justify-between items-baseline mb-2"><h4 class="font-semibold uppercase text-xs tracking-widest">Soufflé Grand Marnier</h4><span class="text-gold">16</span></div>
         </div>
       </div>
+    </main>
 
-      <div class="space-y-12">
-        <h3 class="font-serif text-3xl italic border-b border-gold/30 pb-4">Finales</h3>
-        <div class="group">
-          <div class="flex justify-between items-baseline mb-2">
-            <h4 class="font-semibold uppercase text-xs tracking-widest">Soufflé au Grand Marnier</h4>
-            <span class="text-gold">16</span>
-          </div>
-          <p class="text-[11px] text-charcoal/50 leading-relaxed italic">Préparé à la minute (prévoir 15 min d'attente).</p>
+    <main id="vins" class="page-section pt-40 px-6 max-w-7xl mx-auto pb-32">
+        <div class="text-center mb-16">
+            <h2 class="font-serif text-5xl mb-4">Notre Cellier</h2>
+            <p class="text-gold uppercase tracking-[0.4em] text-[10px]">Importations privées & Vins Naturels</p>
         </div>
+        <div class="grid md:grid-cols-2 gap-10 bg-charcoal p-12 text-white">
+            <p class="italic text-white/70 italic text-sm leading-relaxed">"Une sélection rigoureuse des meilleurs terroirs du Québec et d'Europe, conservée à température parfaite."</p>
+            <button onclick="toggleChat()" class="border border-gold text-gold py-4 px-8 uppercase text-[10px] tracking-widest font-bold hover:bg-gold hover:text-white transition-all">Consulter notre Sommelier IA</button>
+        </div>
+    </main>
+
+    <main id="contact" class="page-section pt-40 px-6 max-w-7xl mx-auto pb-32 text-center">
+        <h2 class="font-serif text-5xl mb-8 text-charcoal">Événements Privés</h2>
+        <p class="max-w-2xl mx-auto text-charcoal/60 text-sm mb-12">Pour vos lancements ou dîners d'affaires, le Bistro Le Plateau offre une salle privée pouvant accueillir jusqu'à 25 convives.</p>
+        <a href="mailto:contact@leplateau.com" class="text-gold underline underline-offset-8 tracking-widest text-xs uppercase font-bold">Nous Contacter</a>
+    </main>
+
+    <main id="reserve" class="page-section pt-40 px-6 max-w-3xl mx-auto pb-32">
+      <div class="text-center mb-16">
+        <h2 class="font-serif text-5xl mb-4">Une Table au Plateau</h2>
+        <p class="text-gold uppercase tracking-[0.4em] text-[10px]">Réservation instantanée</p>
       </div>
-    </div>
-  </main>
+      <form onsubmit="handleManualBooking(event)" class="space-y-6 bg-white p-10 shadow-sm border border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <input type="text" id="res-name" placeholder="Nom" required class="border-b border-gray-200 py-3 focus:border-gold outline-none text-sm">
+          <select id="res-guests" class="border-b border-gray-200 py-3 focus:border-gold outline-none text-sm bg-transparent">
+            <option>2 personnes</option><option>4 personnes</option><option>6+ personnes</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <input type="date" id="res-date" required class="border-b border-gray-200 py-3 outline-none text-sm">
+          <input type="time" id="res-time" required class="border-b border-gray-200 py-3 outline-none text-sm">
+        </div>
+        <button type="submit" class="w-full bg-charcoal text-white py-5 mt-6 text-[11px] uppercase tracking-[0.3em] font-bold hover:bg-gold transition-all">Confirmer la demande</button>
+      </form>
+    </main>
+  </div>
 
   <footer class="bg-charcoal text-white/40 py-20 px-8 border-t border-white/5">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
@@ -117,12 +130,10 @@
         <p class="text-[10px] uppercase tracking-[0.5em] mb-4 text-gold">Bistro Le Plateau</p>
         <p class="text-xs">4500 Rue Saint-Denis, Montréal, QC</p>
       </div>
-      
       <div class="text-center">
-        <p class="text-[9px] uppercase tracking-[0.2em] mb-2">Conception & Intelligence Artificielle</p>
+        <p class="text-[9px] uppercase tracking-[0.2em] mb-2 font-bold">Conception & Intelligence Artificielle</p>
         <p class="text-white text-[11px] font-bold tracking-widest uppercase">Propulsé par Ton Agence IA</p>
       </div>
-
       <div class="flex gap-6">
         <span class="text-[10px] uppercase tracking-widest">Instagram</span>
         <span class="text-[10px] uppercase tracking-widest">Facebook</span>
@@ -134,11 +145,16 @@
     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
   </button>
 
-  <div id="chat-window" class="fixed bottom-28 right-10 z-[60] w-[350px] h-[500px] bg-white shadow-2xl rounded-sm flex flex-col translate-y-[150%] transition-transform duration-500">
-    <div class="p-6 bg-charcoal text-white text-[10px] uppercase tracking-[0.3em] font-bold">Concierge Virtuel</div>
-    <div id="chat-messages" class="flex-1 p-6 overflow-y-auto text-xs space-y-4 text-charcoal/80 scrollbar-hide"></div>
+  <div id="chat-window" class="fixed bottom-28 right-10 z-[60] w-[350px] h-[500px] bg-white shadow-2xl rounded-sm flex flex-col translate-y-[150%] transition-transform duration-500 overflow-hidden">
+    <div class="p-6 bg-charcoal text-white text-[10px] uppercase tracking-[0.3em] font-bold flex justify-between items-center">
+        <span>Concierge Virtuel</span>
+        <button onclick="toggleChat()" class="text-white/50">✕</button>
+    </div>
+    <div id="chat-messages" class="flex-1 p-6 overflow-y-auto text-[11px] space-y-4 text-charcoal/80 scrollbar-hide">
+        <div class="italic text-gold italic">Bonjour. Je suis l'assistant intelligent du Bistro. Comment puis-je vous aider dans votre expérience aujourd'hui ?</div>
+    </div>
     <form id="chat-form" class="p-6 border-t border-gray-100 flex gap-2">
-      <input type="text" id="user-input" placeholder="Demandez une recommandation..." class="flex-1 text-[10px] uppercase tracking-widest outline-none border-b border-gray-200 py-2">
+      <input type="text" id="user-input" placeholder="Message..." class="flex-1 text-[10px] uppercase tracking-widest outline-none border-b border-gray-200 py-2">
       <button type="submit" class="text-gold font-bold text-[10px] uppercase tracking-widest">Envoyer</button>
     </form>
   </div>
@@ -147,9 +163,13 @@
     function showPage(pageId) {
       document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      const activeSection = document.getElementById(pageId);
+      if(activeSection) activeSection.classList.add('active');
       
-      document.getElementById(pageId).classList.add('active');
-      event.target.classList.add('active');
+      // On met à jour le bouton de nav
+      const navBtn = Array.from(document.querySelectorAll('.nav-link')).find(btn => btn.innerText.toLowerCase().includes(pageId === 'home' ? 'accueil' : pageId));
+      if(navBtn) navBtn.classList.add('active');
+      
       window.scrollTo(0, 0);
     }
 
@@ -157,97 +177,58 @@
       document.getElementById('chat-window').classList.toggle('translate-y-[150%]');
     }
 
-    // Réutilisation de ta logique API Groq ici...
+    function addMessage(text, isUser = false) {
+      const msgArea = document.getElementById('chat-messages');
+      const msg = document.createElement('div');
+      msg.className = isUser ? "font-bold border-l-2 border-charcoal pl-2" : "text-gold italic border-l-2 border-gold pl-2";
+      // On cache le code technique si présent
+      msg.innerHTML = `<strong>${isUser ? 'VOUS' : 'BISTRO'}:</strong> ${text.split("[RESERVATION")[0]}`;
+      msgArea.appendChild(msg);
+      msgArea.scrollTop = msgArea.scrollHeight;
+    }
+
+    function handleManualBooking(e) {
+        e.preventDefault();
+        alert("Demande reçue ! Notre équipe vous contactera sous peu.");
+        showPage('home');
+    }
+
     document.getElementById('chat-form').onsubmit = async (e) => {
       e.preventDefault();
       const input = document.getElementById('user-input');
-      const msgArea = document.getElementById('chat-messages');
-      if(!input.value) return;
+      const text = input.value.trim();
+      if(!text) return;
 
-      const userMsg = document.createElement('div');
-      userMsg.innerHTML = `<strong>VOUS:</strong> ${input.value}`;
-      msgArea.appendChild(userMsg);
-      
-      const prompt = input.value;
+      addMessage(text, true);
       input.value = '';
+
+      // Loader
+      const loader = document.createElement('div');
+      loader.id = "ai-loader";
+      loader.className = "dot-flashing ml-2 my-4";
+      document.getElementById('chat-messages').appendChild(loader);
 
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: prompt })
+          body: JSON.stringify({ prompt: text })
         });
         const data = await res.json();
-        const aiMsg = document.createElement('div');
-        aiMsg.className = "text-gold italic";
-        aiMsg.innerHTML = `<strong>BISTRO:</strong> ${data.text}`;
-        msgArea.appendChild(aiMsg);
+        document.getElementById('ai-loader').remove();
+        
+        addMessage(data.text);
+
+        if (data.text.includes("[RESERVATION_CONFIRMED")) {
+            setTimeout(() => {
+                addMessage("✅ SYSTÈME : La réservation a été transmise au personnel de salle.");
+            }, 600);
+        }
       } catch (err) {
-        console.log("Erreur API");
+        if(document.getElementById('ai-loader')) document.getElementById('ai-loader').remove();
+        addMessage("Désolé, une erreur de connexion s'est produite.");
       }
     };
   </script>
 </body>
 </html>
-
-<main id="reserve" class="page-section pt-40 px-6 max-w-3xl mx-auto pb-32">
-  <div class="text-center mb-16">
-    <h2 class="font-serif text-5xl mb-4">Une Table au Plateau</h2>
-    <p class="text-gold uppercase tracking-[0.4em] text-[10px]">Réservation instantanée</p>
-  </div>
-
-  <form onsubmit="handleBooking(event)" class="space-y-6 bg-white p-10 shadow-sm border border-gray-100">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="space-y-2">
-        <label class="text-[10px] uppercase tracking-widest font-bold">Nom Complet</label>
-        <input type="text" id="res-name" placeholder="M. Tremblay" required class="w-full border-b border-gray-200 py-3 focus:border-gold outline-none transition-all text-sm">
-      </div>
-      <div class="space-y-2">
-        <label class="text-[10px] uppercase tracking-widest font-bold">Nombre d'invités</label>
-        <select id="res-guests" class="w-full border-b border-gray-200 py-3 focus:border-gold outline-none bg-transparent text-sm">
-          <option>2 personnes</option>
-          <option>4 personnes</option>
-          <option>6+ personnes</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="space-y-2">
-        <label class="text-[10px] uppercase tracking-widest font-bold">Date</label>
-        <input type="date" id="res-date" required class="w-full border-b border-gray-200 py-3 focus:border-gold outline-none text-sm">
-      </div>
-      <div class="space-y-2">
-        <label class="text-[10px] uppercase tracking-widest font-bold">Heure</label>
-        <input type="time" id="res-time" required class="w-full border-b border-gray-200 py-3 focus:border-gold outline-none text-sm">
-      </div>
-    </div>
-
-    <button type="submit" class="w-full bg-charcoal text-white py-5 mt-6 text-[11px] uppercase tracking-[0.3em] font-bold hover:bg-gold transition-all">
-      Confirmer la demande
-    </button>
-  </form>
-</main>
-
-// Remplace la partie "try/catch" de ton chat-form par ceci :
-try {
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: text })
-  });
-  const data = await res.json();
-  chatMessages.removeChild(loading);
-  
-  // DÉTECTION DE RÉSERVATION
-  if (data.text.includes("[RESERVATION_CONFIRMED")) {
-    addMessage(data.text.split("[")[0]); // Affiche le texte poli
-    addMessage("✅ Système : Réservation enregistrée dans notre calendrier !");
-    // Optionnel : Déclencher des confettis ou un son ici
-  } else {
-    addMessage(data.text);
-  }
-} catch (err) {
-  chatMessages.removeChild(loading);
-  addMessage("Désolé, je n'ai pas pu valider la demande.");
-}
