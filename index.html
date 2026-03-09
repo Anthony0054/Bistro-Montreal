@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bistro Le Plateau | Montréal</title>
+  <title>Bistro Le Plateau | Expérience IA</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
 
@@ -11,124 +11,126 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            charcoal: '#2C2C2C',
-            gold: '#C9A84C',
-            'off-white': '#F8F5F0',
-          },
-          fontFamily: {
-            serif: ['"Playfair Display"', 'serif'],
-            sans: ['Montserrat', 'sans-serif'],
-          },
+          colors: { charcoal: '#1A1A1A', gold: '#D4AF37', 'off-white': '#FAF9F6' },
+          fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['Montserrat', 'sans-serif'] },
         },
       },
     };
   </script>
 
   <style>
-    body { font-family: 'Montserrat', sans-serif; background-color: #F8F5F0; }
-    #hero {
-      background-image: linear-gradient(rgba(44,44,44,0.65), rgba(44,44,44,0.55)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop');
-      background-size: cover; background-position: center; background-attachment: fixed;
-    }
-    .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); }
-    .hidden { display: none; }
+    .glass { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); }
+    .chat-shadow { box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+    .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: #D4AF37; animation: dot-flashing 1s infinite linear alternate; animation-delay: .5s; }
+    @keyframes dot-flashing { 0% { opacity: 1; } 50%, 100% { opacity: .2; } }
   </style>
 </head>
 
-<body class="antialiased">
+<body class="bg-off-white font-sans text-charcoal antialiased">
 
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-charcoal/90 backdrop-blur-md">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full border border-gold flex items-center justify-center text-gold font-serif">B</div>
-        <span class="text-off-white font-serif tracking-wide">Bistro Le Plateau</span>
-      </div>
-      
+  <nav class="fixed top-0 w-full z-40 bg-charcoal/95 backdrop-blur-sm border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <button onclick="setLang('fr')" class="text-xs font-bold text-gold">FR</button>
-        <button onclick="setLang('en')" class="text-xs font-bold text-white/60">EN</button>
-        <a href="tel:5141234567" class="bg-gold px-4 py-2 rounded-full text-[10px] uppercase font-bold text-charcoal">Appeler</a>
+        <span class="font-serif text-2xl text-gold tracking-tighter italic underline decoration-1 underline-offset-8">Le Plateau</span>
       </div>
+      <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] text-white/70 font-semibold">
+        <a href="#menu" class="hover:text-gold transition-colors">Menu</a>
+        <a href="#" class="hover:text-gold transition-colors">Réservations</a>
+        <a href="#" class="hover:text-gold transition-colors">Contact</a>
+      </div>
+      <button class="bg-gold text-charcoal px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-transform">Réserver</button>
     </div>
   </nav>
 
-  <section id="hero" class="min-h-screen flex items-center justify-center text-center px-4">
-    <div class="max-w-3xl">
-      <h1 class="font-serif text-5xl md:text-7xl text-off-white mb-6">
-        <span data-lang="fr">L'âme de Montréal</span>
-        <span data-lang="en" class="hidden">The Soul of Montreal</span>
-      </h1>
-      
-      <div id="ai-container" class="hidden glass rounded-2xl p-6 mb-8 text-left animate-fadeIn">
-        <p class="text-gold text-xs uppercase tracking-widest mb-2">Assistant IA</p>
-        <p id="ai-response" class="text-off-white text-sm leading-relaxed italic">Analyse du menu en cours...</p>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="#menu" class="bg-gold text-charcoal px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest">Voir le Menu</a>
-        <button id="ai-btn" class="border-2 border-gold text-gold px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest bg-charcoal/40">🤖 Aide IA</button>
+  <section class="relative h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="https://images.unsplash.com/photo-1550966841-396ad886fe5c?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover scale-105 animate-pulse" style="animation-duration: 10s" alt="Interior">
+      <div class="absolute inset-0 bg-black/60"></div>
+    </div>
+    
+    <div class="relative z-10 text-center px-6">
+      <h1 class="font-serif text-6xl md:text-8xl text-white mb-6 leading-tight">L'âme de Montréal <br><span class="text-gold italic">dans chaque assiette</span></h1>
+      <p class="text-white/80 max-w-xl mx-auto mb-10 text-lg font-light">Cuisine locale raffinée, vins naturels et ambiance chaleureuse au cœur du Plateau. Une expérience authentiquement montréalaise.</p>
+      <div class="flex flex-col sm:flex-row gap-5 justify-center">
+        <a href="#menu" class="bg-white text-charcoal px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.2em] hover:bg-gold hover:text-charcoal transition-all">Explorer le Menu</a>
+        <button onclick="toggleChat()" class="glass text-white px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.2em] border border-white/20 hover:bg-white/10 transition-all">Parler à l'Assistant</button>
       </div>
     </div>
   </section>
 
-  <section id="menu" class="py-20 px-6 max-w-5xl mx-auto">
-    <div class="text-center mb-12">
-      <h2 class="font-serif text-4xl text-charcoal mb-4">Menu du Bistro</h2>
-      <div class="h-1 w-20 bg-gold mx-auto"></div>
+  <div id="chat-window" class="fixed bottom-6 right-6 z-50 w-[90vw] md:w-[400px] h-[550px] glass rounded-3xl chat-shadow flex flex-col translate-y-[120%] transition-transform duration-500 ease-out">
+    <div class="p-6 border-b border-white/10 flex justify-between items-center bg-gold/10 rounded-t-3xl">
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+        <span class="text-white font-bold tracking-wide">Assistant Bistro</span>
+      </div>
+      <button onclick="toggleChat()" class="text-white/50 hover:text-white">✕</button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex justify-between items-center">
-          <h4 class="font-serif text-lg font-bold">Soupe à l'oignon</h4>
-          <span class="text-gold font-bold">$14</span>
-        </div>
-        <p class="text-gray-500 text-xs mt-2">Bouillon maison, gruyère fondu, croûtons.</p>
-      </div>
-      
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex justify-between items-center">
-          <h4 class="font-serif text-lg font-bold">Tartare de betterave</h4>
-          <span class="text-gold font-bold">$16</span>
-        </div>
-        <p class="text-gray-500 text-xs mt-2">Betteraves rôties, chèvre, noix. 🌱</p>
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm scrollbar-hide">
+      <div class="bg-white/5 p-4 rounded-2xl text-white/90 max-w-[85%] self-start border border-white/5">
+        Bonjour ! Je suis l'IA du Bistro. Comment puis-je vous aider aujourd'hui ? Je connais notre menu par cœur ! 🍷
       </div>
     </div>
-  </section>
+
+    <div class="p-6 border-t border-white/10">
+      <form id="chat-form" class="relative">
+        <input type="text" id="user-input" placeholder="Posez une question..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/20 focus:outline-none focus:border-gold transition-all">
+        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-gold p-2 rounded-xl hover:scale-110 transition-transform">
+          <svg class="w-5 h-5 text-charcoal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="arrow-right"></path><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
 
   <script>
-    // GESTION DES LANGUES
-    function setLang(lang) {
-      document.querySelectorAll('[data-lang]').forEach(el => {
-        el.classList.add('hidden');
-        if(el.getAttribute('data-lang') === lang) el.classList.remove('hidden');
-      });
+    const chatWindow = document.getElementById('chat-window');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+
+    function toggleChat() {
+      chatWindow.classList.toggle('translate-y-[120%]');
     }
 
-    // CONNEXION GROQ VIA VERCEL API
-    document.getElementById('ai-btn').onclick = async function(e) {
+    function addMessage(text, isUser = false) {
+      const msg = document.createElement('div');
+      msg.className = isUser 
+        ? "bg-gold text-charcoal p-4 rounded-2xl max-w-[85%] ml-auto font-medium" 
+        : "bg-white/5 text-white/90 p-4 rounded-2xl max-w-[85%] self-start border border-white/5";
+      msg.innerText = text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    chatForm.onsubmit = async (e) => {
       e.preventDefault();
-      const container = document.getElementById('ai-container');
-      const response = document.getElementById('ai-response');
-      
-      container.classList.remove('hidden');
-      response.innerText = "Claude analyse le menu pour vous...";
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, true);
+      userInput.value = '';
+
+      // Effet de chargement
+      const loading = document.createElement('div');
+      loading.className = "flex gap-1 p-4 bg-white/5 rounded-2xl w-16";
+      loading.innerHTML = '<div class="dot-flashing"></div><div class="dot-flashing" style="animation-delay: 0.7s"></div><div class="dot-flashing" style="animation-delay: 0.9s"></div>';
+      chatMessages.appendChild(loading);
 
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: "Quelles sont vos recommandations pour un repas local ?" })
+          body: JSON.stringify({ prompt: text })
         });
-
         const data = await res.json();
-        response.innerText = data.text;
+        chatMessages.removeChild(loading);
+        addMessage(data.text);
       } catch (err) {
-        response.innerText = "Erreur de connexion. Vérifiez que le dossier /api/chat.js existe sur GitHub.";
+        chatMessages.removeChild(loading);
+        addMessage("Désolé, j'ai une petite panne technique. Réessayez ?");
       }
     };
   </script>
-
 </body>
 </html>
