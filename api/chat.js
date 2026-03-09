@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Sécurité de base pour les requêtes
   if (req.method !== 'POST') {
     return res.status(405).json({ text: "Seules les requêtes POST sont autorisées." });
   }
@@ -8,7 +7,6 @@ export default async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     const userPrompt = body.prompt || "Bonjour !";
 
-    // Utilisation de ta clé directement (Hard-coded)
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -16,7 +14,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192", // Modèle ultra-stable pour le test
+        model: "llama-3.3-70b-versatile", // Nouveau modèle à jour
         messages: [
           { 
             role: "system", 
