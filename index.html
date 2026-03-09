@@ -1213,3 +1213,30 @@
     </script>
 </body>
 </html>
+<script>
+    document.getElementById('ai-btn').onclick = async function(e) {
+        e.preventDefault();
+        const responseDiv = document.getElementById('ai-response') || alert; // Utilise une alerte si la div n'existe pas encore
+        
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                body: JSON.stringify({ prompt: "Quelles sont vos recommandations ?" })
+            });
+            const data = await res.json();
+            
+            if (responseDiv === alert) {
+                alert("L'IA dit : " + data.text);
+            } else {
+                responseDiv.innerText = data.text;
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Erreur de connexion avec l'IA. Vérifie tes logs Vercel.");
+        }
+    };
+</script>
+<a href="#" class="action-link" id="ai-btn">
+    <span>🤖</span>
+    <span>Aide IA</span>
+</a>
