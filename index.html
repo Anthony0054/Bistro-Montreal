@@ -228,3 +228,26 @@
     </button>
   </form>
 </main>
+
+// Remplace la partie "try/catch" de ton chat-form par ceci :
+try {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: text })
+  });
+  const data = await res.json();
+  chatMessages.removeChild(loading);
+  
+  // DÉTECTION DE RÉSERVATION
+  if (data.text.includes("[RESERVATION_CONFIRMED")) {
+    addMessage(data.text.split("[")[0]); // Affiche le texte poli
+    addMessage("✅ Système : Réservation enregistrée dans notre calendrier !");
+    // Optionnel : Déclencher des confettis ou un son ici
+  } else {
+    addMessage(data.text);
+  }
+} catch (err) {
+  chatMessages.removeChild(loading);
+  addMessage("Désolé, je n'ai pas pu valider la demande.");
+}
