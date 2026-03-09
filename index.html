@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bistro Le Plateau | Expérience IA</title>
+  <title>Bistro Le Plateau | Gastronomie & IA</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
 
@@ -11,7 +11,7 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: { charcoal: '#1A1A1A', gold: '#D4AF37', 'off-white': '#FAF9F6' },
+          colors: { charcoal: '#121212', gold: '#D4AF37', 'off-white': '#FAF9F6' },
           fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['Montserrat', 'sans-serif'] },
         },
       },
@@ -19,102 +19,144 @@
   </script>
 
   <style>
-    .glass { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); }
-    .chat-shadow { box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+    .glass { background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+    .hero-bg { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('hero-bg.jpg'); background-size: cover; background-position: center; }
     .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: #D4AF37; animation: dot-flashing 1s infinite linear alternate; animation-delay: .5s; }
     @keyframes dot-flashing { 0% { opacity: 1; } 50%, 100% { opacity: .2; } }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
   </style>
 </head>
 
 <body class="bg-off-white font-sans text-charcoal antialiased">
 
-  <nav class="fixed top-0 w-full z-40 bg-charcoal/95 backdrop-blur-sm border-b border-white/5">
+  <nav class="fixed top-0 w-full z-40 bg-charcoal/95 backdrop-blur-md border-b border-white/5">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <span class="font-serif text-2xl text-gold tracking-tighter italic underline decoration-1 underline-offset-8">Le Plateau</span>
-      </div>
-      <div class="hidden md:flex gap-8 text-[11px] uppercase tracking-[0.2em] text-white/70 font-semibold">
+      <span class="font-serif text-2xl text-gold tracking-tighter">Bistro Le Plateau</span>
+      <div class="hidden md:flex gap-8 text-[10px] uppercase tracking-[0.3em] text-white/60">
         <a href="#menu" class="hover:text-gold transition-colors">Menu</a>
-        <a href="#" class="hover:text-gold transition-colors">Réservations</a>
-        <a href="#" class="hover:text-gold transition-colors">Contact</a>
+        <a href="#booking" class="hover:text-gold transition-colors">Réservations</a>
       </div>
-      <button class="bg-gold text-charcoal px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-transform">Réserver</button>
+      <button onclick="openBooking()" class="bg-gold text-charcoal px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all">Réserver</button>
     </div>
   </nav>
 
-  <section class="relative h-screen flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <img src="https://images.unsplash.com/photo-1550966841-396ad886fe5c?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover scale-105 animate-pulse" style="animation-duration: 10s" alt="Interior">
-      <div class="absolute inset-0 bg-black/60"></div>
-    </div>
-    
-    <div class="relative z-10 text-center px-6">
-      <h1 class="font-serif text-6xl md:text-8xl text-white mb-6 leading-tight">L'âme de Montréal <br><span class="text-gold italic">dans chaque assiette</span></h1>
-      <p class="text-white/80 max-w-xl mx-auto mb-10 text-lg font-light">Cuisine locale raffinée, vins naturels et ambiance chaleureuse au cœur du Plateau. Une expérience authentiquement montréalaise.</p>
-      <div class="flex flex-col sm:flex-row gap-5 justify-center">
-        <a href="#menu" class="bg-white text-charcoal px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.2em] hover:bg-gold hover:text-charcoal transition-all">Explorer le Menu</a>
-        <button onclick="toggleChat()" class="glass text-white px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.2em] border border-white/20 hover:bg-white/10 transition-all">Parler à l'Assistant</button>
+  <section class="relative h-screen flex items-center justify-center text-center hero-bg">
+    <div class="relative z-10 px-6">
+      <h1 class="font-serif text-6xl md:text-8xl text-white mb-4 leading-tight">L'âme de Montréal</h1>
+      <p class="text-gold italic text-xl md:text-2xl font-light mb-10">Une table créative au cœur du Plateau</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#menu" class="bg-white text-charcoal px-10 py-4 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-gold transition-all">Le Menu</a>
+        <button onclick="toggleChat()" class="glass text-white px-10 py-4 rounded-full text-[11px] font-bold uppercase tracking-widest border border-white/20 hover:bg-white/5 transition-all">🤖 Assistant IA</button>
       </div>
     </div>
   </section>
 
-  <div id="chat-window" class="fixed bottom-6 right-6 z-50 w-[90vw] md:w-[400px] h-[550px] glass rounded-3xl chat-shadow flex flex-col translate-y-[120%] transition-transform duration-500 ease-out">
-    <div class="p-6 border-b border-white/10 flex justify-between items-center bg-gold/10 rounded-t-3xl">
-      <div class="flex items-center gap-3">
-        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-        <span class="text-white font-bold tracking-wide">Assistant Bistro</span>
+  <section id="menu" class="py-24 px-6 max-w-5xl mx-auto text-center">
+    <h2 class="font-serif text-4xl mb-2">Notre Carte</h2>
+    <p class="text-gold uppercase tracking-[0.3em] text-[10px] mb-16">Inspirations du Marché</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
+      <div>
+        <h3 class="font-serif text-xl border-b border-charcoal/10 pb-2 mb-6 text-gold italic">Entrées</h3>
+        <div class="space-y-8">
+          <div>
+            <div class="flex justify-between font-bold"><span>Carpaccio de Cerf</span><span>19$</span></div>
+            <p class="text-xs text-charcoal/60 mt-1">Émulsion aux baies de genièvre, copeaux de Migneron.</p>
+          </div>
+          <div>
+            <div class="flex justify-between font-bold"><span>Gnocchis Maison</span><span>17$</span></div>
+            <p class="text-xs text-charcoal/60 mt-1">Beurre de sauge, courge rôtie et graines de citrouille.</p>
+          </div>
+        </div>
       </div>
-      <button onclick="toggleChat()" class="text-white/50 hover:text-white">✕</button>
-    </div>
-
-    <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 text-sm scrollbar-hide">
-      <div class="bg-white/5 p-4 rounded-2xl text-white/90 max-w-[85%] self-start border border-white/5">
-        Bonjour ! Je suis l'IA du Bistro. Comment puis-je vous aider aujourd'hui ? Je connais notre menu par cœur ! 🍷
+      <div>
+        <h3 class="font-serif text-xl border-b border-charcoal/10 pb-2 mb-6 text-gold italic">Plats Principaux</h3>
+        <div class="space-y-8">
+          <div>
+            <div class="flex justify-between font-bold"><span>Omble Chevalier</span><span>34$</span></div>
+            <p class="text-xs text-charcoal/60 mt-1">Croûte de noix, purée de panais et légumes de saison.</p>
+          </div>
+          <div>
+            <div class="flex justify-between font-bold"><span>Bavette de Bœuf AAA</span><span>38$</span></div>
+            <p class="text-xs text-charcoal/60 mt-1">Frites maison à la graisse de canard, sauce au poivre vert.</p>
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="p-6 border-t border-white/10">
-      <form id="chat-form" class="relative">
-        <input type="text" id="user-input" placeholder="Posez une question..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/20 focus:outline-none focus:border-gold transition-all">
-        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 bg-gold p-2 rounded-xl hover:scale-110 transition-transform">
-          <svg class="w-5 h-5 text-charcoal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="arrow-right"></path><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
+  <section id="booking" class="bg-charcoal py-24 px-6 text-white text-center">
+    <div class="max-w-xl mx-auto">
+      <h2 class="font-serif text-4xl mb-12">Réserver une Table</h2>
+      <form onsubmit="handleBooking(event)" class="space-y-4">
+        <input type="text" id="book-name" placeholder="Votre Nom" required class="w-full bg-white/5 border border-white/10 rounded-xl p-4 focus:outline-none focus:border-gold">
+        <div class="grid grid-cols-2 gap-4">
+          <input type="date" id="book-date" required class="bg-white/5 border border-white/10 rounded-xl p-4 focus:outline-none focus:border-gold">
+          <input type="time" id="book-time" required class="bg-white/5 border border-white/10 rounded-xl p-4 focus:outline-none focus:border-gold">
+        </div>
+        <button type="submit" class="w-full bg-gold text-charcoal py-4 rounded-xl font-bold uppercase tracking-widest hover:brightness-110 transition-all">Confirmer la Réservation</button>
       </form>
     </div>
+  </section>
+
+  <div id="chat-window" class="fixed bottom-6 right-6 z-50 w-[90vw] md:w-[380px] h-[500px] glass rounded-3xl flex flex-col translate-y-[120%] transition-transform duration-500 shadow-2xl overflow-hidden">
+    <div class="p-5 border-b border-white/10 flex justify-between items-center bg-gold/5">
+      <span class="text-gold font-bold text-sm tracking-widest uppercase">Concierge IA</span>
+      <button onclick="toggleChat()" class="text-white/40 hover:text-white">✕</button>
+    </div>
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 text-xs scrollbar-hide">
+      <div class="bg-white/5 p-3 rounded-2xl text-white/80 max-w-[85%]">Bienvenue ! Je peux vous parler du menu ou vous aider à réserver une table. Que désirez-vous ?</div>
+    </div>
+    <form id="chat-form" class="p-4 bg-white/5">
+      <div class="relative">
+        <input type="text" id="user-input" placeholder="Message..." class="w-full bg-white/5 border border-white/10 rounded-full py-3 px-5 text-white focus:outline-none focus:border-gold">
+        <button type="submit" class="absolute right-2 top-1.5 bg-gold p-2 rounded-full text-charcoal">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7M5 12h14"/></svg>
+        </button>
+      </div>
+    </form>
   </div>
 
   <script>
     const chatWindow = document.getElementById('chat-window');
     const chatMessages = document.getElementById('chat-messages');
-    const chatForm = document.getElementById('chat-form');
     const userInput = document.getElementById('user-input');
 
-    function toggleChat() {
-      chatWindow.classList.toggle('translate-y-[120%]');
-    }
+    function toggleChat() { chatWindow.classList.toggle('translate-y-[120%]'); }
+    function openBooking() { document.getElementById('booking').scrollIntoView(); }
 
     function addMessage(text, isUser = false) {
       const msg = document.createElement('div');
-      msg.className = isUser 
-        ? "bg-gold text-charcoal p-4 rounded-2xl max-w-[85%] ml-auto font-medium" 
-        : "bg-white/5 text-white/90 p-4 rounded-2xl max-w-[85%] self-start border border-white/5";
+      msg.className = isUser ? "bg-gold text-charcoal p-3 rounded-2xl max-w-[85%] ml-auto font-medium" : "bg-white/10 text-white/90 p-3 rounded-2xl max-w-[85%] self-start border border-white/5";
       msg.innerText = text;
       chatMessages.appendChild(msg);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    chatForm.onsubmit = async (e) => {
+    // Gestion de la réservation
+    function handleBooking(e) {
+      e.preventDefault();
+      const name = document.getElementById('book-name').value;
+      const date = document.getElementById('book-date').value;
+      const time = document.getElementById('book-time').value;
+      
+      toggleChat();
+      addMessage(`Je souhaite réserver pour ${name} le ${date} à ${time}.`, true);
+      setTimeout(() => {
+        addMessage(`C'est noté, ${name} ! Votre table pour le ${date} à ${time} est pré-réservée. Notre équipe vous contactera pour confirmer. À bientôt au Plateau ! 🍷`);
+      }, 1000);
+    }
+
+    document.getElementById('chat-form').onsubmit = async (e) => {
       e.preventDefault();
       const text = userInput.value.trim();
       if (!text) return;
-
       addMessage(text, true);
       userInput.value = '';
 
-      // Effet de chargement
       const loading = document.createElement('div');
-      loading.className = "flex gap-1 p-4 bg-white/5 rounded-2xl w-16";
-      loading.innerHTML = '<div class="dot-flashing"></div><div class="dot-flashing" style="animation-delay: 0.7s"></div><div class="dot-flashing" style="animation-delay: 0.9s"></div>';
+      loading.className = "flex gap-1 p-3 bg-white/5 rounded-2xl w-14";
+      loading.innerHTML = '<div class="dot-flashing"></div><div class="dot-flashing" style="animation-delay: 0.2s"></div><div class="dot-flashing" style="animation-delay: 0.4s"></div>';
       chatMessages.appendChild(loading);
 
       try {
@@ -128,7 +170,7 @@
         addMessage(data.text);
       } catch (err) {
         chatMessages.removeChild(loading);
-        addMessage("Désolé, j'ai une petite panne technique. Réessayez ?");
+        addMessage("Désolé, j'ai un problème de connexion. Réessayez ?");
       }
     };
   </script>
